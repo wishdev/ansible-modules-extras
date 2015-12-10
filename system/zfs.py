@@ -250,6 +250,7 @@ class Zfs(object):
         self.changed = False
 
         self.immutable_properties = [ 'casesensitivity', 'normalization', 'utf8only' ]
+        self.create_only_properties = [ 'createparent' ]
 
     def exists(self):
         cmd = [self.module.get_bin_path('zfs', True)]
@@ -329,11 +330,12 @@ class Zfs(object):
     def set_properties_if_changed(self):
         current_properties = self.get_current_properties()
         for prop, value in self.properties.iteritems():
-            if current_properties[prop] != value:
-                if prop in self.immutable_properties:
-                    self.module.fail_json(msg='Cannot change property %s after creation.' % prop)
-                else:
-                    self.set_property(prop, value) 
+            if not prop in self.create_only_properties:
+                if current_properties[prop] != value:
+                    if prop in self.immutable_properties:
+                        self.module.fail_json(msg='Cannot change property %s after creation.' % prop)
+                    else:
+                        self.set_property(prop, value) 
 
     def get_current_properties(self):
         def get_properties_by_name(propname):
