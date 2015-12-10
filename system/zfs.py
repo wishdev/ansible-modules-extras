@@ -76,6 +76,11 @@ options:
       - The copies property.
     required: False
     choices: [1,2,3]
+  createparent:
+    description:
+      - Creates parents, if needed, during creation
+    required: False
+    choices: ['on','off']
   dedup:
     description:
       - The dedup property.
